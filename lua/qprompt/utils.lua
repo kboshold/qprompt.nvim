@@ -36,9 +36,20 @@ function M.format_as_markdown_link(path, is_directory, from_home)
 	-- Extract the filename or directory name from the path
 	local name = vim.fn.fnamemodify(path, ":t")
 
+	-- If the name is empty (which can happen for the root directory), use the full path
+	if name == "" then
+		name = rel_path
+	end
+
+	-- Remove trailing slash from name if it exists
+	name = name:gsub("/$", "")
+
 	-- Add trailing slash to directory paths for clarity
-	if is_directory and not rel_path:match("/$") then
-		rel_path = rel_path .. "/"
+	if is_directory then
+		if not rel_path:match("/$") then
+			rel_path = rel_path .. "/"
+		end
+		name = name .. "/"
 	end
 
 	-- Create markdown link format: [name](relative_path)
